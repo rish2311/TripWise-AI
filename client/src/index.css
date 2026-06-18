@@ -136,4 +136,32 @@
   .animate-slide-up {
     animation: slideUp 0.4s ease-out;
   }
+
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+  }
 }
+
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+

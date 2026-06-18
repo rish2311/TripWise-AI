@@ -31,7 +31,12 @@ export const useAuthStore = create<AuthStore>()(
     {
       name: 'tripwise-auth', // localStorage key
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ token: state.token, user: state.user }),
+      // Persist all three fields so isAuthenticated survives page refresh
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

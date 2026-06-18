@@ -5,8 +5,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
+import { useToast } from '@/components/ui/Toast';
 import { Plane, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -18,6 +20,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 export const LoginPage = () => {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
+  const { success: toastSuccess, error: toastError } = useToast();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -33,7 +36,12 @@ export const LoginPage = () => {
     onSuccess: (res) => {
       const { token, user } = res.data.data!;
       setAuth(token, user);
+      toastSuccess('Welcome back!', `Signed in as ${user.name}`);
       navigate('/dashboard', { replace: true });
+    },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
+      toastError('Sign in failed', msg || 'Invalid email or password.');
     },
   });
 

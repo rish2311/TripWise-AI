@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
+import { useToast } from '@/components/ui/Toast';
 import { Plane, Mail, Lock, User, Eye, EyeOff, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -27,6 +28,7 @@ const passwordStrength = (pw: string): { label: string; color: string; width: st
 export const RegisterPage = () => {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
+  const { success: toastSuccess, error: toastError } = useToast();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -44,7 +46,12 @@ export const RegisterPage = () => {
     onSuccess: (res) => {
       const { token, user } = res.data.data!;
       setAuth(token, user);
+      toastSuccess('Account created!', `Welcome to TripWise AI, ${user.name}!`);
       navigate('/dashboard', { replace: true });
+    },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
+      toastError('Registration failed', msg || 'Could not create your account.');
     },
   });
 

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { ToastProvider } from '@/components/ui/Toast';
+import { AuthInitializer } from '@/components/AuthInitializer';
 import { AppLayout } from '@/layouts/AppLayout';
 import { ProtectedRoute, PublicRoute } from '@/routes/guards';
 
@@ -27,32 +29,36 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          {/* ── Public routes ── */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/share/:shareId" element={<SharedTripPage />} />
+      <ToastProvider>
+        {/* Validates persisted JWT token on every page load */}
+        <AuthInitializer />
+        <BrowserRouter>
+          <Routes>
+            {/* ── Public routes ── */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/share/:shareId" element={<SharedTripPage />} />
 
-          {/* ── Auth routes (redirect if logged in) ── */}
-          <Route element={<PublicRoute />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Route>
-
-          {/* ── Protected routes (redirect if not logged in) ── */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AppLayout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/upload" element={<UploadPage />} />
-              <Route path="/trips" element={<MyTripsPage />} />
-              <Route path="/trips/:id" element={<TripDetailPage />} />
+            {/* ── Auth routes (redirect if logged in) ── */}
+            <Route element={<PublicRoute />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
             </Route>
-          </Route>
 
-          {/* ── 404 ── */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
+            {/* ── Protected routes (redirect if not logged in) ── */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/upload" element={<UploadPage />} />
+                <Route path="/trips" element={<MyTripsPage />} />
+                <Route path="/trips/:id" element={<TripDetailPage />} />
+              </Route>
+            </Route>
+
+            {/* ── 404 ── */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
     </QueryClientProvider>
   );
 }

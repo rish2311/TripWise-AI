@@ -1,21 +1,24 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
-import { Plane, Map, LogOut, Menu, X, User } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+import { Plane, LayoutDashboard, Map, LogOut, Menu, X, User, Upload } from 'lucide-react';
 import { useState } from 'react';
 
 const navLinks = [
-  { to: '/dashboard', label: 'Dashboard', icon: Map },
-  { to: '/upload', label: 'New Trip', icon: Plane },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/upload', label: 'New Trip', icon: Upload },
   { to: '/trips', label: 'My Trips', icon: Map },
 ];
 
 export const AppLayout = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const { info: toastInfo } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
+    toastInfo('Signed out', 'See you next time!');
     navigate('/login');
   };
 
